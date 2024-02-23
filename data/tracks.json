@@ -1,0 +1,32 @@
+[
+  {
+    "userId": 3,
+    "requestId": 1,
+    "status": "proses"
+  },
+  {
+    "userId": 3,
+    "requestId": 2,
+    "status": "proses"
+  },
+  {
+    "userId": 3,
+    "requestId": 2,
+    "status": "penimbangan"
+  },
+  {
+    "userId": 3,
+    "requestId": 3,
+    "status": "proses"
+  },
+  {
+    "userId": 3,
+    "requestId": 3,
+    "status": "penimbangan"
+  },
+  {
+    "userId": 3,
+    "requestId": 3,
+    "status": "pencucian"
+  }
+]

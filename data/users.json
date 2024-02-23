@@ -1,0 +1,26 @@
+[
+  {
+    "username": "rizki",
+    "password": "12345",
+    "phoneNumber": "08324324512",
+    "role": "owner"
+  },
+  {
+    "username": "bejo",
+    "password": "12345",
+    "phoneNumber": "0821354125",
+    "role": "admin"
+  },
+  {
+    "username": "ujang",
+    "password": "ujang",
+    "phoneNumber": "081231434",
+    "role": "customer"
+  },
+  {
+    "username": "gabi",
+    "password": "gabi",
+    "phoneNumber": "081231434122",
+    "role": "customer"
+  }
+]

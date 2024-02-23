@@ -1,0 +1,20 @@
+[
+  {
+    "price": 30000,
+    "scale": 2,
+    "status": "proses",
+    "userId": 3
+  },
+  {
+    "price": 30000,
+    "scale": 2,
+    "status": "penimbangan",
+    "userId": 3
+  },
+  {
+    "price": 30000,
+    "scale": 2,
+    "status": "pencucian",
+    "userId": 3
+  }
+]
