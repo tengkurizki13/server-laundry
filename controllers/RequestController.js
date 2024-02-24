@@ -1,7 +1,7 @@
 const { Request,User,Track } = require("../models");
 const { Op } = require('sequelize');
 const { format } = require("date-fns");
-const {isConnected,fileSock,kodeQr,connectToWhatsApp} = require("../wa_confic")
+const {isConnected,fileSock} = require("../wa_confic")
 const path = require('path'); 
 const fs = require('fs').promises;
 const folderPath = path.join(__dirname, '../baileys_auth_info'); 
@@ -92,43 +92,44 @@ if (req.query.startDate && req.query.endDate) {
   }
 
   static async requestAdd(req, res, next) {
+    const t = await sequelize.transaction(); // Mulai transaksi
+
     try {
-      const {
-        scale,
-        price,
-        userId
-      } = req.body;
-      
+        const {
+            scale,
+            price,
+            userId
+        } = req.body;
 
-      let newRequest = await Request.create({
-        scale,
-        price,
-        userId
-      });
+        let newRequest = await Request.create({
+            scale,
+            price,
+            userId
+        }, { transaction: t }); // Gunakan transaksi
 
-      let idRequest = Number(newRequest.id)
-      let idPelanggan = Number(userId)
+        let idRequest = Number(newRequest.id);
+        let idPelanggan = Number(userId);
 
-      await Track.create({
-        userId : idPelanggan,
-        requestId : idRequest,
-        status: "proses"
-      });
+        await Track.create({
+            userId: idPelanggan,
+            requestId: idRequest,
+            status: "proses"
+        }, { transaction: t }); // Gunakan transaksi
 
+        let request = await Request.findByPk(idRequest, { transaction: t });
 
-         let request = await Request.findByPk(idRequest);
-      
-         res.status(201).json(
-           {
-             message: "Request has been created successfully",
-             data: request,
-           },
-         );
+        await t.commit(); // Komit transaksi jika berhasil
+
+        res.status(201).json({
+            message: "Request has been created successfully",
+            data: request,
+        });
     } catch (error) {
-      console.log(error);
-      next(error);
+        await t.rollback(); // Rollback transaksi jika terjadi kesalahan
+        console.log(error);
+        next(error);
     }
-  }
+}
 
   static async requestDelete(req, res, next) {
     try {
@@ -190,6 +191,8 @@ static async requestStatusUpdate(req, res, next) {
       if (isConnected) {
           const { id } = req.params;
           const { status } = req.body;
+
+          console.log(status,"ini statues",id,"ini id");
 
           let option = {
               include: [
@@ -262,25 +265,6 @@ Tim laundry citra jaya`;
 }
 
 
-  static async getQRCODE(req, res, next) {
-  try {
-    await fs.rmdir(folderPath, { recursive: true });
-    await connectToWhatsApp()
-    
-    if (kodeQr() !== undefined) {
-      res.status(200).json({
-        massage: `berhasil menggambil qr code`,
-        data : kodeQr()
-      });
-    }else{
-      res.status(200).json({
-        massage: `sudah terdaftar`,
-      });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
 }
 
 module.exports = RequestController;

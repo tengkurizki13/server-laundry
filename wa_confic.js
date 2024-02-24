@@ -65,6 +65,7 @@ async function connectToWhatsApp() {
             }
         } else if (connection === 'open') {
             console.log('opened connection');
+            updateQR("connected");
             return;
         }
         if (update.qr) {
@@ -129,14 +130,13 @@ const updateQR = (data) => {
     switch (data) {
         case "qr":
             qrcode.toDataURL(qr, (err, url) => {
-                console.log(url,"ini server");
                 soket?.emit("qr", url);
-                soket?.emit("log", "QR Code received, please scan!");
+                soket?.emit("log", "scan");
             });
             break;
         case "connected":
             soket?.emit("qrstatus", "../../assets/images.jpeg");
-            soket?.emit("log", "WhatsApp terhubung!");
+            soket?.emit("log", "connected");
             break;
         case "qrscanned":
             soket?.emit("qrstatus", "./assets/check.svg");

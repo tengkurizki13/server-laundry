@@ -8,6 +8,5 @@ router.post("/api/requests", RequestController.requestAdd);
 router.delete("/api/requests/:id", RequestController.requestDelete);
 router.put("/api/requests-status/:id", RequestController.requestStatusUpdate);
 router.put("/api/requests/:id", RequestController.requestUpdate);
-router.get("/api/requests-qrcode", RequestController.getQRCODE);
 
 module.exports = router;

@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   Request.init(
     {
       scale: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: { msg: "Berat Timbangan Kosong" },
@@ -27,11 +27,16 @@ module.exports = (sequelize, DataTypes) => {
             if (Number(value) <= 0) {
               throw new Error("Total Timbangan tidak boleh kosong atau minus");
             }
+          },
+          notString(value) {
+            if (isNaN(value)) {
+              throw new Error("Total Timbangan harus berupa angka");
+            }
           }
         },
       },
       price: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: { msg: "Harga Kosong" },
@@ -39,6 +44,11 @@ module.exports = (sequelize, DataTypes) => {
           notZero(value) {
             if (Number(value) <= 0) {
               throw new Error("Total Harga tidak boleh kosong atau minus");
+            }
+          },
+          notString(value) {
+            if (isNaN(value)) {
+              throw new Error("Total Harga harus berupa angka");
             }
           }
         },
