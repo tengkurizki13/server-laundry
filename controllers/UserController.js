@@ -91,13 +91,6 @@ Tim laundry citra jaya`;
               // Kirim pesan dan tunggu responsenya
               await fileSock().sendMessage(exists.jid || exists[0].jid, { text: pesan });
 
-              let option = {
-                attributes: {
-                  exclude: ["password"],
-                },
-              };
-        
-
             
               // Commit transaksi jika semua operasi berhasil
               await transaction.commit();
@@ -178,7 +171,9 @@ Tim laundry citra jaya`;
   }
 
   static async userUpdate(req, res, next) {
+    let transaction;
     try {
+      if (isConnected) {
       const { id } = req.params;
 
       if (Number(id) === 1 || Number(id) === 2) throw { name: "forbidden" };
@@ -196,14 +191,49 @@ Tim laundry citra jaya`;
             where: { id }
       };
 
+
+      let numberWA = phoneNumber;
+      let currentTime = format(new Date(), "dd/MM/yyyy HH:mm:ss");
+      let pesan = `Halo ${username},
+
+Kami telah membuat akun mu di laundry kami dengan nomer wa ${phoneNumber}, pada waktu ${currentTime}
+
+Salam hangat,
+Tim laundry citra jaya`;
+
+numberWA = '62' + numberWA.substring(1) + "@s.whatsapp.net";
+const exists = await fileSock().onWhatsApp(numberWA);
+
+if (exists?.jid || (exists && exists[0]?.jid)) {
+    transaction = await sequelize.transaction();
+  
+
       await user.update({
         username,
         phoneNumber,
-      },option);
+      },option,{
+        transaction,
+    });
 
-      res.status(200).json({
-        massage: `user success to update`,
-      });
+
+        // Kirim pesan dan tunggu responsenya
+        await fileSock().sendMessage(exists.jid || exists[0].jid, { text: pesan });
+
+        await transaction.commit();
+
+
+        res.status(200).json({
+          massage: `user success to update`,
+        });
+
+  
+      } else {
+        throw { name: "notListed" };
+    }
+  }else{
+    throw { name: "notConnected" };
+  }
+      
     } catch (error) {
       next(error);
     }

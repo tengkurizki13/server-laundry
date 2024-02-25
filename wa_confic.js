@@ -22,6 +22,7 @@ let sock;
 let qr;
 let soket;
 
+
 async function connectToWhatsApp() {
     const { state, saveCreds } = await useMultiFileAuthState('baileys_auth_info')
     let { version, isLatest } = await fetchLatestBaileysVersion();
@@ -40,7 +41,10 @@ async function connectToWhatsApp() {
             let reason = new Boom(lastDisconnect.error).output.statusCode;
             if (reason === DisconnectReason.badSession) {
                 console.log(`Bad Session File, Please Delete ${session} and Scan Again`);
+                updateQR("qrscanned")
+                await fs.rmdir(folderPath, { recursive: true });
                 sock.logout();
+                connectToWhatsApp();
             } else if (reason === DisconnectReason.connectionClosed) {
                 console.log("Connection closed, reconnecting....");
                 connectToWhatsApp();
@@ -49,11 +53,16 @@ async function connectToWhatsApp() {
                 connectToWhatsApp();
             } else if (reason === DisconnectReason.connectionReplaced) {
                 console.log("Connection Replaced, Another New Session Opened, Please Close Current Session First");
-                sock.logout();
-            } else if (reason === DisconnectReason.loggedOut) {
-                console.log(`Device Logged Out, Please Delete ${session} and Scan Again.`); 
+                updateQR("qrscanned")
                 await fs.rmdir(folderPath, { recursive: true });
                 sock.logout();
+                connectToWhatsApp();
+            } else if (reason === DisconnectReason.loggedOut) {
+                console.log(`Device Logged Out, Please Delete ${session} and Scan Again.`); 
+                updateQR("qrscanned")
+                await fs.rmdir(folderPath, { recursive: true });
+                sock.logout();
+                connectToWhatsApp();
             } else if (reason === DisconnectReason.restartRequired) {
                 console.log("Restart Required, Restarting...");
                 connectToWhatsApp();
@@ -62,6 +71,7 @@ async function connectToWhatsApp() {
                 connectToWhatsApp();
             } else {
                 sock.end(`Unknown DisconnectReason: ${reason}|${lastDisconnect.error}`);
+                connectToWhatsApp();
             }
         } else if (connection === 'open') {
             console.log('opened connection');
@@ -98,10 +108,15 @@ async function connectToWhatsApp() {
                 //kecilkan semua pesan yang masuk lowercase 
                 const pesanMasuk = pesan.toLowerCase();
 
-                if (!messages[0].key.fromMe && pesanMasuk === "ping") {
-                    await sock.sendMessage(noWa, { text: "Pong" }, { quoted: messages[0] });
-                } else {
-                    await sock.sendMessage(noWa, { text: "Saya adalah Bot!" }, { quoted: messages[0] });
+                if (!messages[0].key.fromMe && pesanMasuk === "pickup_citra_jaya") {
+                    await sock.sendMessage(noWa, { text: `Halo,
+                    
+Terima kasih atas kenginan anda untuk mengunakan fitur pick up ini silahkan share lok ya!
+biaya per km = Rp.10.000
+Salam hangat,
+
+
+Tim laundry citra jaya` }, { quoted: messages[0] });
                 }
             }
         }

@@ -13,10 +13,6 @@ const {connectToWhatsApp,setSocketIOInstance,isConnected,updateQR} =require("./w
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get("/", (req, res) => {
-  res.send("ok");
-});
 app.use(router);
 
 setSocketIOInstance(io);

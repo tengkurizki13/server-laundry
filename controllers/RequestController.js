@@ -2,11 +2,7 @@ const { Request,User,Track } = require("../models");
 const { Op } = require('sequelize');
 const { format } = require("date-fns");
 const {isConnected,fileSock} = require("../wa_confic")
-const path = require('path'); 
-const fs = require('fs').promises;
-const folderPath = path.join(__dirname, '../baileys_auth_info'); 
 const { sequelize } = require('../models'); 
-
 
 class RequestController {
   static async requests(req, res, next) {
@@ -191,8 +187,6 @@ static async requestStatusUpdate(req, res, next) {
       if (isConnected) {
           const { id } = req.params;
           const { status } = req.body;
-
-          console.log(status,"ini statues",id,"ini id");
 
           let option = {
               include: [
